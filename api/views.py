@@ -1,6 +1,5 @@
-from django.http import HttpResponse
+from .favicon import serve_favicon_req
 
-
-def home_page_view(request):
-    return HttpResponse("Hello, World!")
+def favicon_view(request, uri):
+    return serve_favicon_req(request, uri)
 

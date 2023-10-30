@@ -24,8 +24,31 @@ SECRET_KEY = "django-insecure-ds^7=xdm(eegtcy0*iu%brlf7y4v8by1$lq+sd*p1mh56c_l0m
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+#DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
+
+LOGGING = {
+    "version": 1,  # the dictConfig format version
+    "disable_existing_loggers": False,  # retain the default loggers
+    'formatters': {
+        'simple': {
+            'format': '[%(asctime)s] %(levelname)s | %(name)s | %(message)s',
+            'datefmt': '%Y-%m-%d %H:%M:%S',
+        },
+    },
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+            "formatter": "simple",
+        },
+    },
+    "root": {
+        "handlers": ["console"],
+        "level": "INFO",
+        'propagate': True,
+    }
+}
 
 
 # Application definition

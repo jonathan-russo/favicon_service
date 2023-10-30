@@ -1,9 +1,8 @@
-# pages/urls.py
 from django.urls import path
 
-from .views import home_page_view
+from .views import favicon_view
 
 urlpatterns = [
-    path("", home_page_view, name="home"),
+    path("<str:uri>/", favicon_view, name="favicon"),
 ]
 

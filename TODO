@@ -1,0 +1,27 @@
+Items to do
+------------
+
+- Add Caching with Redis
+- Add in bootstrap script
+- Add in IAC
+- Clean up code
+  - Ensure variables are all named with same standard
+  - Break up code into different files
+  - Remove Django bits I'm not using
+  - Environment specific properties
+- Write up tests
+- Write up README
+- Write up description of project
+- Add in timeout?
+
+
+Hosts that have favicon.ico
+---------------------------
+google.com
+wikipedia.org
+icon.horse
+youtube.com
+
+Hosts that rely on link tags
+----------------------------
+www.1800contacts.com
