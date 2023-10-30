@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 def serve_favicon_req(request, uri):
     try:
         scheme, domain = validate_uri(uri)
-    except e:
+    except Exception as e:
         return JsonResponse(format_error_response(400, "Invalid URI", str(e)), status=400)
 
     try:
@@ -25,6 +25,9 @@ def serve_favicon_req(request, uri):
 
 
 def validate_uri(uri):
+    if len(uri.split(":")) != 2:
+        raise ValueError("Invalid request.")
+    
     scheme,domain = uri.split(":")
 
     valid = True
@@ -67,7 +70,11 @@ def get_favicon(base_url):
         page = requests.get(base_url)
         soup = BeautifulSoup(page.text, features="lxml")
         for item in soup.find_all('link', attrs={'rel': re.compile("^(shortcut icon|icon)$", re.I)}):
-            favicon_locations.append(item.get('href'))
+            if "http" not in item.get('href'):
+                # Account for relative path
+                favicon_locations.append(base_url + item.get('href'))
+            else:
+                favicon_locations.append(item.get('href'))
         
         for icon_url in favicon_locations:
             logger.info(f"Trying to get favicon from {icon_url}")
@@ -75,7 +82,7 @@ def get_favicon(base_url):
             if res.status_code == 200 and "image/" in res.headers['content-type']:
                 return res.headers['content-type'], res.content
             logger.warning(f"No favicon found at {icon_url}")
-    except requests.exceptions.RequestException as e:
+    except requests.exceptions.RequestException:
         logger.error("Failure while trying to retrieve favicon, returning default.")
         return get_default_icon()
     
