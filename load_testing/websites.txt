@@ -14,7 +14,6 @@ www.uta.edu
 www.pref.nagasaki.jp
 www.aauw.org
 soke.meb.gov.tr
-www.uakron.edu:443
 www.aichi-kanko.jp
 gikai.pref.akita.lg.jp
 www.miyada.jp
@@ -58,7 +57,6 @@ www.ufcos.org.uk
 epic.org
 www.karvina.cz
 governor.hawaii.gov
-www.unilibrecucuta.edu.co
 www.zambiatourism.com
 nbs.sk
 www.nus.edu.sg

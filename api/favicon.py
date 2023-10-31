@@ -30,8 +30,6 @@ def validate_uri(uri):
     
     scheme,domain = uri.split(":")
 
-    valid = True
-
     if scheme.lower() not in ["http","https"]:
         raise ValueError("Invalid Scheme.  Only http or https allowed.")
 

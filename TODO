@@ -1,13 +1,13 @@
 Items to do
 ------------
 
-- Add Caching with Redis
 - Add in properties files
   - Redis cache TTL
   - DEBUG mode
   - Log Level
   - default image name/content-type
-- Add in bootstrap script
+- Finish bootstrap script
+  - Integrate Packer?
 - Add in IAC
 - Clean up code
   - Ensure variables are all named with same standard
@@ -17,7 +17,6 @@ Items to do
   - Fix editor warnings
   - Ensure code formatting is nice
 - Write up tests
-  - Load Tests
   - Unit Tests?
 - Write up README
 - Write up description of project
