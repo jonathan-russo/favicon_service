@@ -11,9 +11,11 @@ import logging
 logger = logging.getLogger(__name__)
 
 def serve_favicon_req(request, uri):
+    """ Main function to serve favicon requests """
     try:
         scheme, domain = validate_uri(uri)
     except Exception as e:
+        logger.error(f"Received invalid request.  uri:'{uri}'")
         return JsonResponse(format_error_response(400, "Invalid URI", str(e)), status=400)
 
     try:
@@ -25,6 +27,7 @@ def serve_favicon_req(request, uri):
 
 
 def validate_uri(uri):
+    """ Validate and parse the provided uri """
     if len(uri.split(":")) != 2:
         raise ValueError("Invalid request.")
     
@@ -41,11 +44,11 @@ def validate_uri(uri):
     return scheme, domain
 
 def get_favicon_data_response(scheme, domain):
+    """ Return favicon data as a JSON Object """
     base_url = f"{scheme}://{domain}"
-    try:
-        content_type, img_object = get_favicon(base_url)
-    except Exception as e:
-        raise e
+    
+    # Retrieve the favicon from the domain
+    content_type, img_object = get_favicon(base_url)
 
     #Turn into data string
     encoded_image = base64.b64encode(img_object).decode('utf-8')
@@ -60,11 +63,18 @@ def get_favicon_data_response(scheme, domain):
     }
 
 def get_favicon(base_url):
-
-    favicon_locations = [
-        f"{base_url}/favicon.ico" #Typical favicon location 
-    ]
+    """ Retrieve the content type and image contents of the favicon """
     try:
+        # Try typical favicon location first
+        icon_url = f"{base_url}/favicon.ico"
+        logger.info(f"Trying to get favicon from {icon_url}")
+        res = requests.get(icon_url, stream=True)
+        if res.status_code == 200 and "image/" in res.headers['content-type']:
+            return res.headers['content-type'], res.content
+        logger.warning(f"No favicon found at {icon_url}")
+
+        # Parse the sites index page for icon links
+        favicon_locations = []
         page = requests.get(base_url)
         soup = BeautifulSoup(page.text, features="lxml")
         for item in soup.find_all('link', attrs={'rel': re.compile("^(shortcut icon|icon)$", re.I)}):
@@ -80,6 +90,7 @@ def get_favicon(base_url):
             if res.status_code == 200 and "image/" in res.headers['content-type']:
                 return res.headers['content-type'], res.content
             logger.warning(f"No favicon found at {icon_url}")
+            
     except requests.exceptions.RequestException:
         logger.error("Failure while trying to retrieve favicon, returning default.")
         return get_default_icon()
@@ -88,11 +99,13 @@ def get_favicon(base_url):
     return get_default_icon()
     
 def get_default_icon():
+    """ Return the content type and image data for the default favicon """
     default_img_binary = open("default_icon.ico", 'rb').read()
     return "image/x-icon", default_img_binary
 
 
 def format_error_response(status_code,title, detail):
+    """ Format the error response object as JSON """
     error_obj={ "errors": []}
     
     error_obj['errors'].append(

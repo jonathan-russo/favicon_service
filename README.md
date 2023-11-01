@@ -12,13 +12,16 @@ python3 -m venv .venv
 pip install -r requirements.txt
 ```
 
-Next we will want to run our development redis server.  We can accomplish this with docker compose.  Ensure that you have docker installed on your computer and run the following command.
+If we want to test with caching enabled locally we will need to run our development redis server.  We can accomplish this with docker compose.  Ensure that you have docker installed on your computer and run the following command.
 
 `docker compose -f docker-compose-redis.yml up`
 
-Finally we can run our service!
+Finally we can run our service!  The following commands set our development specific settings and run the service:
 
-`python manage.py runserver`
+```
+export $(xargs < configs/local.env)
+python manage.py runserver
+```
 
 # API Structure
 

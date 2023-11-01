@@ -1,26 +1,16 @@
 Items to do
 ------------
 
-- Add in properties files
-  - Redis cache TTL
-  - DEBUG mode
-  - Log Level
-  - default image name/content-type
 - Finish bootstrap script
   - Integrate Packer?
+  - Think of logging setup
 - Add in IAC
 - Clean up code
-  - Ensure variables are all named with same standard
-  - Comment code (Function descriptions?)
-  - Break up code into different files
   - Remove Django bits I'm not using
-  - Fix editor warnings
-  - Ensure code formatting is nice
 - Write up tests
   - Unit Tests?
 - Write up README
 - Write up description of project
-- Add in timeout?
 
 
 API to get random websites
