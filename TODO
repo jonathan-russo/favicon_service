@@ -2,13 +2,11 @@ Items to do
 ------------
 
 - Finish bootstrap script
-  - Integrate Packer?
-  - Think of logging setup
+  - Validate script
+  - Comment better
+  - Write up other improvements(Packer, Logging)
 - Add in IAC
-- Clean up code
-  - Remove Django bits I'm not using
-- Write up tests
-  - Unit Tests?
+- Write unit tests
 - Write up README
 - Write up description of project
 
