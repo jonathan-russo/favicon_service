@@ -227,28 +227,93 @@ variable "lb_idle_timeout" {
 #DNS variables
 
 variable "lb_dns_alias" {
-  type = string
+  type    = string
   default = null
 }
 
 variable "domain_zone_id" {
-  type = string
+  type    = string
   default = null
 }
 
 variable "dns_record_type" {
-  type = string
+  type    = string
   default = "CNAME"
 }
 
 variable "dns_ttl" {
-  type = string
+  type    = string
   default = "300"
 }
 
 # S3 Vars
 
 variable "bucket_name" {
-  type = string
+  type        = string
   description = "Name of the S3 bucket to store deployment object."
+}
+
+# Redis Vars
+
+variable "shard_count" {
+  description = "Setting this higher than 1(default) enables cluster-mode on the Elasticache Redis deployment.  Specifies the number of shards in the cluster.  Must be used with a parameter group that sets the 'cluster-enabled' parameter."
+  type        = number
+  default     = 1
+}
+
+variable "node_count" {
+  description = "Number of nodes to use.  Total number of nodes when in non-cluster mode. Number of nodes per shard in cluster-mode.  If more than 1 are specified the other nodes will be read replicas."
+  type        = number
+  default     = 1
+}
+
+variable "enable_automatic_failover" {
+  description = "When enabled, a read-only replica is automatically promoted to a read-write primary cluster if the existing primary cluster fails. If you specify true, you must specify a value greater than 1 for node_count.  Enabled by default when in cluster-mode"
+  type        = bool
+  default     = false
+}
+
+variable "enable_multi_az" {
+  description = "Specifies whether to enable Multi-AZ Support for the replication group. If true, automatic_failover_enabled must also be enabled. Defaults to false."
+  type        = bool
+  default     = false
+}
+
+variable "elasticache_instance_type" {
+  description = "The node type to use for the Cluster."
+  type        = string
+  default     = "cache.m4.large"
+}
+
+variable "engine_version" {
+  description = "Redis Engine version to use for the Elasticache cluster. Must match the parameter group specified or auto-generated through elasticache_db_parameter_group_family"
+  type        = string
+  default     = "7.0"
+}
+
+variable "elasticache_db_parameter_group_family" {
+  description = "Family to use for the Elasticache parameter group to create. Must match the engine version"
+  type        = string
+  default     = "redis7"
+}
+
+variable "elasticache_db_parameter_group_parameters" {
+  description = "Map of values to set in the Elasticache parameter group. Only applies if elasticache_db_parameter_group_name not set."
+  type = list(object({
+    name  = string
+    value = string
+  }))
+  default = []
+}
+
+variable "maintenance_window" {
+  description = "Time for the maintenance window.  UTC"
+  type        = string
+  default     = "fri:03:00-fri:04:00"
+}
+
+variable "enable_transit_encryption" {
+  description = "Whether to enable encryption in transit."
+  type        = bool
+  default     = true
 }

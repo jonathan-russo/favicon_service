@@ -16,6 +16,7 @@
  * - Target group.
  * - AutoScaling Group
  * - S3 Bucket to hold deployment object
+ * - Redis Database
  */
 
 #################
@@ -26,8 +27,8 @@ locals {
   final_name = "${var.env_name}-${var.stack_name}"
 
   final_ami = coalesce(
-    var.ami_id,             # Explictly specified AMI takes precedence
-    data.aws_ami.ubuntu.id  # Fallback to latest Ubuntu 20.04
+    var.ami_id,            # Explictly specified AMI takes precedence
+    data.aws_ami.ubuntu.id # Fallback to latest Ubuntu 20.04
   )
 }
 
@@ -166,19 +167,19 @@ resource "aws_security_group_rule" "lb_allow_all_egress" {
 ####################
 
 data "aws_ami" "ubuntu" {
-    most_recent = true
+  most_recent = true
 
-    filter {
-        name   = "name"
-        values = ["ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-*"]
-    }
+  filter {
+    name   = "name"
+    values = ["ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-*"]
+  }
 
-    filter {
-        name   = "virtualization-type"
-        values = ["hvm"]
-    }
+  filter {
+    name   = "virtualization-type"
+    values = ["hvm"]
+  }
 
-    owners = ["099720109477"] # Canonical
+  owners = ["099720109477"] # Canonical
 }
 
 resource "aws_launch_template" "this" {
@@ -307,6 +308,93 @@ resource "aws_security_group_rule" "worker_egress" {
   protocol    = "-1"
   description = "Allow all egress"
   cidr_blocks = ["0.0.0.0/0"]
+}
+
+#########
+# Redis
+#########
+
+resource "aws_elasticache_replication_group" "redis_cluster" {
+  replication_group_id = substr("${local.final_name}-redis-db-cluster", 0, 40)
+  description          = "Redis cluster for the ${local.final_name} environment."
+
+  engine         = "redis"
+  engine_version = var.engine_version
+  node_type      = var.elasticache_instance_type
+  port           = 6379
+
+  parameter_group_name = aws_elasticache_parameter_group.param_group.name
+  security_group_ids   = [aws_security_group.redis_sg.id]
+  subnet_group_name    = aws_elasticache_subnet_group.redis_subnet_group.name
+
+  maintenance_window = var.maintenance_window
+
+  at_rest_encryption_enabled = true
+  transit_encryption_enabled = var.enable_transit_encryption
+
+  multi_az_enabled           = var.enable_multi_az
+  automatic_failover_enabled = var.shard_count > 1 ? true : var.enable_automatic_failover
+
+  #Number of nodes when non-cluster mode
+  num_cache_clusters = var.shard_count == 1 ? var.node_count : null
+
+  #Nodes per shard in cluster mode
+  num_node_groups         = var.shard_count > 1 ? var.shard_count : null
+  replicas_per_node_group = var.shard_count > 1 ? var.node_count - 1 : null
+
+}
+
+resource "aws_security_group" "redis_sg" {
+  name_prefix = "${var.env_name}-redis-sg"
+  description = "Allow Redis traffic"
+  vpc_id      = var.vpc_id
+
+  ingress {
+    description = "Redis Traffic from Trusted Networks"
+    from_port   = 6379
+    to_port     = 6379
+    protocol    = "tcp"
+    cidr_blocks = var.internal_trusted_networks
+  }
+
+  ingress {
+    description = "Redis Traffic from within VPC"
+    from_port   = 6379
+    to_port     = 6379
+    protocol    = "tcp"
+    cidr_blocks = [data.aws_vpc.vpc_data.cidr_block]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "${var.env_name} redis sg"
+  }
+}
+
+resource "aws_elasticache_parameter_group" "param_group" {
+  family = var.elasticache_db_parameter_group_family
+  name   = "${local.final_name}-redis-param-group"
+
+  dynamic "parameter" {
+    for_each = var.elasticache_db_parameter_group_parameters
+    content {
+      name  = parameter.value.name
+      value = parameter.value.value
+    }
+  }
+}
+
+resource "aws_elasticache_subnet_group" "redis_subnet_group" {
+  name = "${local.final_name}-redis-subnet-group"
+
+  //use as many subnets as nodes wanted, up to the total number of subnets
+  subnet_ids = var.node_count > 1 ? slice(var.subnets, 0, min(var.node_count, length(var.subnets))) : [var.subnets[0]]
 }
 
 
