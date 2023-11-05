@@ -1,13 +1,8 @@
 Items to do
-------------
-
-- Finish bootstrap script
-  - Validate script
-  - Comment better
-  - Write up other improvements(Packer, Logging)
-- Add in IAC
+------------  
 - Write unit tests
 - Write up README
+  - Add up other improvements(Build System, Packer, Logging)
 - Write up description of project
 
 

@@ -2,12 +2,12 @@
 
 # Install Dependencies
 apt -y update
-export DEBIAN_FRONTEND=noninteractive
-apt -y install build-essential curl git systemctl \
+export DEBIAN_FRONTEND=noninteractive # If not present Timezone package will propmpt for user input 
+apt -y install build-essential curl git systemctl awscli \
   libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev \
   libncursesw5-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev libffi-dev liblzma-dev
 
-# Install PyEnv so we can install any Python version
+# Install PyEnv so we can install any Python version(not limited to what Ubuntu 20.04 has avaible in the repos)
 echo "$(date) Installing pyenv"
 git clone https://github.com/pyenv/pyenv.git /opt/pyenv
 cat << 'EOF' > /etc/profile.d/python.sh
@@ -23,8 +23,8 @@ source /etc/profile.d/python.sh
 # Pull down application 
 DDG_ROOT_DIR=/opt/DDG
 mkdir -p ${DDG_ROOT_DIR} && cd ${DDG_ROOT_DIR}
-#wget favicon_service.tar.gz
-tar xzf favicon_service
+aws s3 cp s3://deploy-production-favicon/favicon_service.tar.gz favicon_service.tar.gz
+tar xzf favicon_service.tar.gz
 SERVICE_DIR=${DDG_ROOT_DIR}/favicon_service
 cd ${SERVICE_DIR}
 

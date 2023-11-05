@@ -1,6 +1,10 @@
 # favicon_service
 
-# Running the service locally
+## API Structure
+
+This API uses concepts from the [JSON API Specification](https://jsonapi.org/)
+
+## Running the service locally
 
 The first thing we want to do is ensure that you have the right version of python installed on your system.  Using a tool like pyenv can be helpful for this.  The current python version is listed in our .python-version file.  Using pyenv we can install that version like so: `pyenv install <version>`
 
@@ -23,6 +27,19 @@ export $(xargs < configs/local.env)
 python manage.py runserver
 ```
 
-# API Structure
+## Infrastructure
 
-This API uses concepts from the [JSON API Specification](https://jsonapi.org/)
+We manage this applications infrastructure through Terraform.  In the `infra` folder you will find a terraform module that creates all the relevant infrastructure for this application.  Also in the infra folder you will find the bootstrap script used to provision a new Ubuntu 20.04 server and run our application.
+
+In order to plan/apply this infrastructure you will need to set your AWS environment variables and execute the following terraform commands like so:
+
+```
+export AWS_ACCESS_KEY_ID=<YOUR ACCESS KEY>
+export AWS_SECRET_ACCESS_KEY=<YOUR SECRET KEY>
+export AWS_DEFAULT_REGION=<YOUR AWS_REGION>
+terraform init
+terraform plan -var-file="prod.tfvars"
+terraform apply -var-file="prod.tfvars"
+```
+
+

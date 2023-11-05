@@ -5,3 +5,5 @@ from django.views.decorators.cache import cache_page
 def favicon_view(request, uri):
     return serve_favicon_req(request, uri)
 
+def health_view(request):
+    return "Healthy!"
