@@ -10,11 +10,13 @@ A request for `/favicon/https:duckduckgo.com` should result in a JSON object con
 
 ## Running the service locally
 
-The first thing we want to do is ensure that you have the right version of python installed on your system.  Using a tool like pyenv can be helpful for this.  The current python version is listed in our .python-version file.  Using pyenv we can install that version like so: `pyenv install <version>`
+The first thing we want to do is ensure that you have the right version of python installed on your system.  Using a tool like pyenv can be helpful for this.  The current python version is listed in our `.python-version` file.  Using pyenv we can install that version like so: 
+
+`pyenv install <version>`
 
 Next we want to setup and enable our virtualenv.  Virtual environments allow us to isolate our applications dependencies from our system defaults or other applications.  The following commands will setup our virtual environment, activate it, and install our dependencies:
 
-```
+```bash
 python3 -m venv .venv
 . .venv/bin/activate
 pip install -r requirements.txt
@@ -24,12 +26,14 @@ If we want to test with caching enabled locally we will need to run our developm
 
 `docker compose -f docker-compose-redis.yml up`
 
-Finally we can run our service!  The following commands set our development specific settings and run the service:
+Finally we can run our service!  Since our service uses environment variables for its configuration we export the development specific settings and run the service:
 
-```
+```bash
 export $(xargs < configs/local.env)
 python manage.py runserver
 ```
+
+You can now view the service at `http://127.0.0.1:8000`
 
 ## Testing
 
@@ -45,11 +49,11 @@ Details about how we can perform load tests can be found in the `load_testing` f
 
 ## Infrastructure
 
-We manage this applications infrastructure through Terraform.  In the `infra` folder you will find a terraform module that creates all the relevant infrastructure for this application.  Also in the infra folder you will find the bootstrap script used to provision a new Ubuntu 20.04 server and run our application.
+We manage this application's infrastructure through Terraform.  In the `infra` folder you will find terraform code that creates all the relevant infrastructure for this application.  Also in the infra folder you will find the bootstrap script used to provision a new Ubuntu 20.04 server and run our application.
 
 In order to plan/apply this infrastructure you will need to set your AWS environment variables and execute the following terraform commands like so:
 
-```
+```bash
 export AWS_ACCESS_KEY_ID=<YOUR ACCESS KEY>
 export AWS_SECRET_ACCESS_KEY=<YOUR SECRET KEY>
 export AWS_DEFAULT_REGION=<YOUR AWS_REGION>
@@ -60,7 +64,7 @@ terraform apply -var-file="prod.tfvars"
 
 ## Future Improvements
 
-While this project is 100% functional there are always optimizations that we can make.  This section will give a brief overview of some of those possible optimizations
+While this project is currently functional there are always optimizations that we can make.  This section will give a brief overview of some of those possible optimizations.
 
 ### Build system
 
@@ -68,8 +72,8 @@ We will want to integrate this application with the organization's Build System.
 
 ### Logging
 
-Since we are running our service with systemd our logs are available through the `journalctl` utility.  However keeping logs directly on the server is a bad practice.  We should be offloading our logs to a centralized logging system.  One way that this can be done is via rsyslog.  In particular for Elasticsearch there is a module [omelasticsearch](https://www.rsyslog.com/doc/v8-stable/configuration/modules/omelasticsearch.html) that provides native support for sending logs directly to Elasticsearch.
+Since we are running our service with `systemd` our logs are available with the `journalctl` utility.  However keeping logs directly on the server is a bad practice.  We should be offloading our logs to a centralized logging system.  One way that this can be done is via `rsyslog``.  In particular for Elasticsearch there is a module [omelasticsearch](https://www.rsyslog.com/doc/v8-stable/configuration/modules/omelasticsearch.html) that provides native support for sending logs directly to Elasticsearch.
 
 ### Packer
 
-The current bootstrap script works great, however it can take a long time to execute.  This means that our servers take longer to provision and can affect application availability.  We can utilize Packer to build AMIs baked with all of our required software.  Then when we need a new server, we boot that AMI, upload the latest version of the code onto the host, and start our service.  A POC of the Packer configuration can be found in the `packer/` folder.
+The current bootstrap script works great, however it can take a long time to execute.  This means that our servers take longer to provision, which could affect application availability.  We can utilize Packer to build AMIs baked with all of our required software.  Then when we need a new server, we boot that AMI, upload the latest version of the code onto the host, and start our service.  A POC of the Packer configuration can be found in the `packer` folder.
