@@ -28,6 +28,9 @@ DEBUG = (os.getenv('DEBUG', 'False').lower() == 'true')
 
 ALLOWED_HOSTS = ["*"]
 
+# Disable Djangos built in slash adding so we match the spec.
+APPEND_SLASH = False
+
 LOGGING = {
     "version": 1,  # the dictConfig format version
     "disable_existing_loggers": False,  # retain the default loggers

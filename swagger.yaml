@@ -1,0 +1,57 @@
+openapi: 3.0.0
+info:
+  title: Favicon API
+  description: API to return the favorite icon for a specified domain.
+  version: 0.1
+paths:
+  /favicon/{uri}:
+    get:
+      summary: Returns a data url for the specified uri.
+      parameters:
+        - name: uri
+          in: path
+          required: true
+          description: The scheme and domain for which favicon to return.  In the format "<scheme>:<domain>".  Example "https:duckduckgo.com"
+      responses:
+        '200':
+          description: A JSON object specifying the data url of the favicon
+          content:
+            application/json:
+              schema: 
+                type: object
+                properties: 
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        scheme: 
+                          type: string
+                          example: https
+                        domain:
+                          type: string
+                          example: duckduckgo.com
+                        data_url: 
+                          type: string
+        '400':
+          description: An error occured when parsing the uri input
+          content:
+            application/json:
+              schema: 
+                type: object
+                properties: 
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        status:
+                          type: integer
+                          example: 400
+                        title:
+                          type: string
+                          example: Invalid URI
+                        detail:
+                          type: string
+                          example: TCP is not a valid scheme
+

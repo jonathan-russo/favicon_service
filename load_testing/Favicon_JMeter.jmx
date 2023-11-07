@@ -32,7 +32,7 @@
           </elementProp>
           <stringProp name="HTTPSampler.domain">127.0.0.1</stringProp>
           <stringProp name="HTTPSampler.port">8000</stringProp>
-          <stringProp name="HTTPSampler.path">/favicon/https:${domain}/</stringProp>
+          <stringProp name="HTTPSampler.path">/favicon/https:${domain}</stringProp>
           <stringProp name="HTTPSampler.method">GET</stringProp>
           <boolProp name="HTTPSampler.follow_redirects">false</boolProp>
           <boolProp name="HTTPSampler.auto_redirects">false</boolProp>

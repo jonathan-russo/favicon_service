@@ -12,7 +12,7 @@ packer {
   }
 }
 
-source "amazon-ebs" "amazon-linux" {
+source "amazon-ebs" "ubuntu-linux" {
   ami_name      = "favicon-${local.timestamp}"
   instance_type = "t3.micro"
   region        = "us-east-1"
@@ -25,7 +25,7 @@ source "amazon-ebs" "amazon-linux" {
     most_recent = true
     owners      = ["099720109477"]
   }
-  ssh_username = "ec2-user"
+  ssh_username = "ubuntu"
 
   encrypt_boot = true
 
@@ -44,7 +44,7 @@ source "amazon-ebs" "amazon-linux" {
 build {
   name = "favicon"
   sources = [
-    "source.amazon-ebs.amazon-linux"
+    "source.amazon-ebs.ubuntu-linux"
   ]
 
   provisioner "shell" {

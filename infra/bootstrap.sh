@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+echo "$(date) Bootstrap start"
+
 # Install Dependencies
 apt -y update
 export DEBIAN_FRONTEND=noninteractive # If not present Timezone package will propmpt for user input 
@@ -21,6 +23,7 @@ EOF
 source /etc/profile.d/python.sh
 
 # Pull down application 
+echo "$(date) Downloading application"
 DDG_ROOT_DIR=/opt/DDG
 mkdir -p ${DDG_ROOT_DIR} && cd ${DDG_ROOT_DIR}
 aws s3 cp s3://deploy-production-favicon/favicon_service.tar.gz favicon_service.tar.gz
@@ -31,7 +34,6 @@ cd ${SERVICE_DIR}
 # Add service user and change service dir ownership
 useradd favicon
 chown -R favicon ${SERVICE_DIR}
-cd ${SERVICE_DIR}
 
 # Install relevant Python Version
 PYTHON_VERSION=$(cat .python-version)
@@ -61,5 +63,9 @@ WantedBy=multi-user.target
 EOF
 
 # Run Service
+echo "$(date) Starting service"
 systemctl enable favicon
 systemctl start favicon
+
+echo "$(date) Bootstrap finish"
+
