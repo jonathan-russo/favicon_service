@@ -21,10 +21,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ['SECRET_KEY']
+SECRET_KEY = os.environ["SECRET_KEY"]
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = (os.getenv('DEBUG', 'False').lower() == 'true')
+DEBUG = os.getenv("DEBUG", "False").lower() == "true"
 
 ALLOWED_HOSTS = ["*"]
 
@@ -34,10 +34,10 @@ APPEND_SLASH = False
 LOGGING = {
     "version": 1,  # the dictConfig format version
     "disable_existing_loggers": False,  # retain the default loggers
-    'formatters': {
-        'simple': {
-            'format': '[%(asctime)s] %(levelname)s | %(name)s | %(message)s',
-            'datefmt': '%Y-%m-%d %H:%M:%S',
+    "formatters": {
+        "simple": {
+            "format": "[%(asctime)s] %(levelname)s | %(name)s | %(message)s",
+            "datefmt": "%Y-%m-%d %H:%M:%S",
         },
     },
     "handlers": {
@@ -48,22 +48,22 @@ LOGGING = {
     },
     "root": {
         "handlers": ["console"],
-        "level": os.environ['LOG_LEVEL'],
-        'propagate': True,
-    }
+        "level": os.environ["LOG_LEVEL"],
+        "propagate": True,
+    },
 }
 
 # Cache
 # If no redis address is set we turn on the dummy cache(Doesn't do any caching)
 
-if 'REDIS_ADDR' in os.environ:
+if "REDIS_ADDR" in os.environ:
     CACHES = {
         "default": {
             "BACKEND": "django.core.cache.backends.redis.RedisCache",
             "LOCATION": f"redis://{os.environ['REDIS_ADDR']}",
         }
     }
-else: 
+else:
     CACHES = {
         "default": {
             "BACKEND": "django.core.cache.backends.dummy.DummyCache",
@@ -78,7 +78,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "api"
+    "api",
 ]
 
 MIDDLEWARE = [
@@ -89,7 +89,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "api.middleware.HealthCheckMiddleware"
+    "api.middleware.HealthCheckMiddleware",
 ]
 
 ROOT_URLCONF = "favicon_service.urls"
