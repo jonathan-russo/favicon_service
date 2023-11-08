@@ -14,7 +14,7 @@ The simplest way to view, edit, or run our tests are in JMeter's GUI mode.  We c
 
 `jmeter -t Favicon_JMeter.jmx`
 
-For documentation on how to configure/use the tool please consult the JMeter documentation [here](https://jmeter.apache.org/usermanual/get-started.html)
+For documentation on how to configure/use the tool please consult the [JMeter documentation](https://jmeter.apache.org/usermanual/get-started.html)
 
 ## Test Data
 

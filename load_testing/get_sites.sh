@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Script used to retrieve random website.  Using a site called uroulett.com to populate
+# Script used to retrieve random website.  Using a site called uroulette.com to populate
 # Domains outputted might be in a weird format, so some data massaging might be needed.
 
 OUT_FILE=websites.txt

@@ -1,11 +1,13 @@
 #!/usr/bin/env bash
+#
+# This script is desi#!gned to be run automatically upon server boot of an Ubuntu 20.04 virtual machine.  This can be done manually or via IAC tools like Terraform.
 
 echo "$(date) Bootstrap start"
 
 # Install Dependencies
 apt -y update
 export DEBIAN_FRONTEND=noninteractive # If not present Timezone package will propmpt for user input 
-apt -y install build-essential curl git systemctl awscli \
+apt -y install build-essential curl git awscli \
   libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev \
   libncursesw5-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev libffi-dev liblzma-dev
 

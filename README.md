@@ -8,9 +8,13 @@ This repo encompasses an API designed to retrieve the favicon for the requested 
 
 A request for `/favicon/https:duckduckgo.com` should result in a JSON object containing the data url.  The JSON object will be formatted according to the [JSON API Specification](https://jsonapi.org/).  A Swagger definition for the API can be found in the file `swagger.yaml`.
 
+This API utilizes the Django Framework.  Please see the documentation [here](https://docs.djangoproject.com/en/4.2/) for information on how to configure it.  
+
+The project also uses environment variables for its configuration.  Common configurations are available in the `configs` folder, however those can be overriden for dynamic environments or other various use cases.
+
 ## Running the service locally
 
-The first thing we want to do is ensure that you have the right version of python installed on your system.  Using a tool like pyenv can be helpful for this.  The current python version is listed in our `.python-version` file.  Using pyenv we can install that version like so: 
+The first thing we want to do is ensure that you have the right version of python installed on your system.  Using a tool like [pyenv](https://github.com/pyenv/pyenv) can be helpful for this.  The current python version is listed in our `.python-version` file.  Using pyenv we can install that version like so: 
 
 `pyenv install <version>`
 
@@ -26,7 +30,7 @@ If we want to test with caching enabled locally we will need to run our developm
 
 `docker compose -f docker-compose-redis.yml up`
 
-Finally we can run our service!  Since our service uses environment variables for its configuration we export the development specific settings and run the service:
+Finally we can run our service!  We first run the command to export our development settings and then use Django's manage.py helper to run the server.
 
 ```bash
 export $(xargs < configs/local.env)
@@ -39,19 +43,19 @@ You can now view the service at `http://127.0.0.1:8000`
 
 ### Unit Tests
 
-We can validate that our code is working as expected through Unit Tests.  The main tests for this project are defined in `api/tests.py`.  You can run the unit tests with the following command:
+In order to ensure each componenet of our API is working as intended we utilize Unit tests.  The tests for this project are defined in `api/tests.py`.  You can run the unit tests with the following command:
 
 `python manage.py test`
 
 ### Load Tests
 
-Details about how we can perform load tests can be found in the `load_testing` folder.
+In order to determine how performant our system is we load test it.  Details about how we can perform these load tests can be found in the `load_testing` folder.
 
 ## Infrastructure
 
-We manage this application's infrastructure through Terraform.  In the `infra` folder you will find terraform code that creates all the relevant infrastructure for this application.  Also in the infra folder you will find the bootstrap script used to provision a new Ubuntu 20.04 server and run our application.
+We manage this application's infrastructure through [Terraform](https://www.terraform.io/).  In the `infra` folder you will find terraform code that creates all the relevant infrastructure for this application.  Also in the infra folder you will find the bootstrap script used to provision a new Ubuntu 20.04 server and run our application.
 
-In order to plan/apply this infrastructure you will need to set your AWS environment variables and execute the following terraform commands like so:
+In order to plan/apply this infrastructure you will need to set your AWS environment variables and execute the following terraform commands:
 
 ```bash
 export AWS_ACCESS_KEY_ID=<YOUR ACCESS KEY>
@@ -68,11 +72,15 @@ While this project is currently functional there are always optimizations that w
 
 ### Build system
 
-We will want to integrate this application with the organization's Build System.  This will allow us to "build" our application and keep our application artifacts in one common software repository.  For this application in particular it would be as simple as compressing the file into a tarball and uploading to the artifact storage location.
+We will want to integrate this application with the organization's Build System.  This will allow us to "build" our application and keep our application artifacts in one common software repository.  For this application in particular the rough steps would be as follows:
+
+- Running our unit tests
+- Compressing the file into a tarball
+- Uploading to the artifact storage location.
 
 ### Logging
 
-Since we are running our service with `systemd` our logs are available with the `journalctl` utility.  However keeping logs directly on the server is a bad practice.  We should be offloading our logs to a centralized logging system.  One way that this can be done is via `rsyslog``.  In particular for Elasticsearch there is a module [omelasticsearch](https://www.rsyslog.com/doc/v8-stable/configuration/modules/omelasticsearch.html) that provides native support for sending logs directly to Elasticsearch.
+Since we are running our service with `systemd` our logs are available with the `journalctl` utility.  However keeping logs directly on the server is a bad practice.  We should be offloading our logs to a centralized logging system.  One way that this can be done is via `rsyslog`.  In particular for Elasticsearch there is a module [omelasticsearch](https://www.rsyslog.com/doc/v8-stable/configuration/modules/omelasticsearch.html) that provides native support for sending logs directly to Elasticsearch.
 
 ### Packer
 
