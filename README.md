@@ -53,7 +53,7 @@ In order to determine how performant our system is we load test it.  Details abo
 
 ## Infrastructure
 
-We manage this application's infrastructure through [Terraform](https://www.terraform.io/).  In the `infra` folder you will find terraform code that creates all the relevant infrastructure for this application.  Also in the infra folder you will find the bootstrap script used to provision a new Ubuntu 20.04 server and run our application.
+We manage this application's infrastructure through [Terraform](https://www.terraform.io/).  In the `infra` folder you will find terraform code that creates all the relevant infrastructure for this application.  Also in the infra folder you will find the bootstrap script used to provision a new Ubuntu 20.04 server and run our application.  This script will be run automatically at instance provisioning time through the instance's user-data.
 
 In order to plan/apply this infrastructure you will need to set your AWS environment variables and execute the following terraform commands:
 
